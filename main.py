@@ -64,6 +64,20 @@ class Player:
         dealer.p_cards.append(game_deck[0])
         game_deck.remove(dealer.p_cards[len(dealer.p_cards)-1])
 
+    def player_reset(p_cards, p_score):
+        global game_deck
+        game_deck.clear()
+        game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10, 
+             'Jack', 'Queen', 'King', 'Ace']*4)
+        player1.p_cards.clear()
+        player1.p_cards == None
+        player1.p_score == 0
+
+    def dealer_reset(p_cards, p_score):
+        dealer.p_cards.clear()
+        dealer.p_cards == None
+        dealer.p_score == 0
+
 
 # player1 = Player("Rick", None, 0)
 # player1.draw_hand()
@@ -97,11 +111,9 @@ def game_actions(p_cards, p_score):
         print(player1.p_cards)
         player1.calculate_score(player1.p_cards, player1.p_score)
         print(f"This is your current score {player1.p_score}")
-    else:
-        print('Restarting your game...')
     while player1.p_score < 21:
         try:
-            print("Select action: Hit | Stand | View Cards | Quit")
+            print("Select action: Hit | Stand | View Cards | Quit | Test")
             action = input()
             if action == 'Hit' or action == 'hit':
                 player1.player_hit()
@@ -110,7 +122,7 @@ def game_actions(p_cards, p_score):
                 print(player1.p_score)
                 if player1.p_score == 21:
                     print("21! You win!")
-                    print("Play again?")
+                    print("Play again? Y/N")
                     play_again = input()
                     if play_again == 'Y' or play_again == 'y':
                         return game_actions(p_cards, p_score)
@@ -131,6 +143,11 @@ def game_actions(p_cards, p_score):
                 print(player1.p_cards)
             elif action == 'Quit' or action == 'quit':
                 sys.exit()
+            elif action == 'Test' or action == 'test':
+                # Below works - but doesn't change score
+                player1.player_reset(p_cards, p_score)
+                print(player1.p_cards)
+                # print(player1.p_score)
             else:
                 print("I'm sorry. That command is not recognized, please select another option...")
                 return game_actions(p_cards = None, p_score = 0)
@@ -155,9 +172,24 @@ def dealer_loop(p_cards, p_score):
             print(f"Dealer score: {dealer.p_score}")
         if dealer.p_score > 21:
             print('Dealer busts! You win!')
-            return game_actions(p_cards==None, p_score==0)
+            print("Play again? Y/N")
+            play_again = input()
+            if play_again == 'Y' or play_again == 'y':
+                # player1.player_reset(p_cards)
+                # dealer.player_reset(p_cards, p_score)
+                return game_actions(p_cards, p_score)
+            elif play_again == 'N' or play_again == 'n':
+                sys.exit()
+            # return game_actions(p_cards, p_score)
         elif 21 > dealer.p_score > player1.p_score:
             print('Dealer wins!')
+            print("Play again? Y/N")
+            play_again = input()
+            if play_again == 'Y' or play_again == 'y':
+                return game_actions(p_cards==None, p_score==0)
+            elif play_again == 'N' or play_again == 'n':
+                sys.exit()
+            return game_actions(p_cards, p_score)
     except:
         print('An error occurred')
         sys.exit()
