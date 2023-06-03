@@ -4,6 +4,8 @@ import sys
 game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10, 
              'Jack', 'Queen', 'King', 'Ace']*4)
 
+round = 0
+
 class Player:
     def __init__(self, name, p_cards, p_score):
         self.name = name
@@ -70,13 +72,34 @@ class Player:
         game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10, 
              'Jack', 'Queen', 'King', 'Ace']*4)
         player1.p_cards.clear()
-        player1.p_cards == None
-        player1.p_score == 0
+        player1.p_score = 0
+        # p_cards == None
+        # p_score == 0
+        # new_score = 0
+        # p_score = new_score
+        
+    # def player_score_reset(p_score):    
+    #     player1.p_score = 0
 
     def dealer_reset(p_cards, p_score):
         dealer.p_cards.clear()
-        dealer.p_cards == None
         dealer.p_score == 0
+
+    # Works
+    #
+    # def player_reset(p_cards, p_score):
+    #     global game_deck
+    #     game_deck.clear()
+    #     game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10, 
+    #          'Jack', 'Queen', 'King', 'Ace']*4)
+    #     player1.p_cards.clear()
+    #     player1.p_cards == None
+    #     player1.p_score == 0
+
+
+    # player1.player_reset(player1.p_cards)
+    # print(player1.p_cards)
+
 
 
 # player1 = Player("Rick", None, 0)
@@ -101,11 +124,12 @@ def game_init() -> Player:
     print("Hello and welcome to the casino! What is your name?")
     player_name = input()
     player1 = Player(f"{player_name}", None, 0)
+    print(player1.p_cards)
     return player1
 player1 = game_init()
 
 def game_actions(p_cards, p_score):
-    if player1.p_cards == None:
+    if player1.p_cards == None or player1.p_cards == []:
         print("Here are your cards...")
         player1.draw_hand()
         print(player1.p_cards)
@@ -125,6 +149,7 @@ def game_actions(p_cards, p_score):
                     print("Play again? Y/N")
                     play_again = input()
                     if play_again == 'Y' or play_again == 'y':
+                        player1.player_reset(p_score)
                         return game_actions(p_cards, p_score)
                     elif play_again == 'N' or play_again == 'n':
                         sys.exit()
@@ -133,20 +158,27 @@ def game_actions(p_cards, p_score):
                     print("Play again? Y/N")
                     play_again = input()
                     if play_again == 'Y' or play_again == 'y':
-                        return game_actions(p_cards==None, p_score==0)
+                        player1.player_reset(p_score)
+                        return game_actions(p_cards, p_score)
                     elif play_again == 'N' or play_again == 'n':
                         sys.exit()
             elif action == 'Stand' or action == 'stand':
                 print("Awaiting dealer turn...")
-                return player1.p_score
+                break
             elif action == 'View Cards' or action == 'view cards':
                 print(player1.p_cards)
             elif action == 'Quit' or action == 'quit':
                 sys.exit()
             elif action == 'Test' or action == 'test':
-                # Below works - but doesn't change score
-                player1.player_reset(p_cards, p_score)
+                # Below works
+                player1.player_reset(p_score)
+                # dealer.player_reset(p_score)
                 print(player1.p_cards)
+                # print(dealer.p_score)
+                return game_actions(p_cards, p_score)
+                # print(len(game_deck))
+                # print(player1.p_score)
+                # player1.player_score_reset()
                 # print(player1.p_score)
             else:
                 print("I'm sorry. That command is not recognized, please select another option...")
@@ -165,7 +197,7 @@ def dealer_loop(p_cards, p_score):
     dealer.calculate_score(dealer.p_cards, dealer.p_score)
     print(f"Dealer score: {dealer.p_score}")
     try: 
-        while dealer.p_score < player1.p_score:
+        while dealer.p_score <= player1.p_score:
             dealer.dealer_hit()
             print(dealer.p_cards)
             dealer.calculate_score(dealer.p_cards, dealer.p_score)
@@ -177,16 +209,20 @@ def dealer_loop(p_cards, p_score):
             if play_again == 'Y' or play_again == 'y':
                 # player1.player_reset(p_cards)
                 # dealer.player_reset(p_cards, p_score)
+                player1.player_reset(p_score)
+                dealer.player_reset(p_score)
                 return game_actions(p_cards, p_score)
             elif play_again == 'N' or play_again == 'n':
                 sys.exit()
             # return game_actions(p_cards, p_score)
-        elif 21 > dealer.p_score > player1.p_score:
+        elif 21 >= dealer.p_score > player1.p_score:
             print('Dealer wins!')
             print("Play again? Y/N")
             play_again = input()
             if play_again == 'Y' or play_again == 'y':
-                return game_actions(p_cards==None, p_score==0)
+                player1.player_reset(p_score)
+                dealer.player_reset(p_score)
+                return game_actions(p_cards, p_score)
             elif play_again == 'N' or play_again == 'n':
                 sys.exit()
             return game_actions(p_cards, p_score)
