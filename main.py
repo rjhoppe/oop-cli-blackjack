@@ -48,9 +48,9 @@ class Player:
                     else:
                         print("Selection invalid, choosing 1 by default")
                         p_score =+ 1
-        if player1.p_score == 21:
-            print("21! You win!")
-            print("Play again?")
+        # if player1.p_score == 21:
+        #     print("21! You win!")
+        #     print("Play again?")
         
         self.p_score = p_score
     
@@ -121,7 +121,7 @@ def game_actions(p_cards, p_score):
                     print("Play again? Y/N")
                     play_again = input()
                     if play_again == 'Y' or play_again == 'y':
-                        return game_init()
+                        return game_actions(p_cards==None, p_score==0)
                     elif play_again == 'N' or play_again == 'n':
                         sys.exit()
             elif action == 'Stand' or action == 'stand':
@@ -155,6 +155,7 @@ def dealer_loop(p_cards, p_score):
             print(f"Dealer score: {dealer.p_score}")
         if dealer.p_score > 21:
             print('Dealer busts! You win!')
+            return game_actions(p_cards==None, p_score==0)
         elif 21 > dealer.p_score > player1.p_score:
             print('Dealer wins!')
     except:
