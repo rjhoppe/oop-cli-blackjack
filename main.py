@@ -4,7 +4,7 @@ import sys
 game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10, 
              'Jack', 'Queen', 'King', 'Ace']*4)
 
-round = 0
+round_count = 0
 
 class Player:
     def __init__(self, name, p_cards, p_score):
@@ -38,7 +38,7 @@ class Player:
                 if c == 'Jack' or c == 'Queen' or c == 'King':
                     p_score += 10
                 else:
-                    print(f"Your score is currently: {p_score} and your cards are: {p_cards}")
+                    print(f"{self.name}'s score is currently: {p_score} and your cards are: {p_cards}")
                     print("Would you like your Ace to be scored as a 1 or an 11?")
                     choice = input()
                     if choice == '1' or '11:':
@@ -55,6 +55,7 @@ class Player:
         #     print("Play again?")
         
         self.p_score = p_score
+        print(f"This is {self.name}'s current score: {p_score}")
     
     def player_hit(p_cards):
         global game_deck
@@ -71,6 +72,8 @@ class Player:
         game_deck.clear()
         game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10, 
              'Jack', 'Queen', 'King', 'Ace']*4)
+        global round_count
+        round_count += 1
         player1.p_cards.clear()
         player1.p_score = 0
         # p_cards == None
@@ -134,7 +137,7 @@ def game_actions(p_cards, p_score):
         player1.draw_hand()
         print(player1.p_cards)
         player1.calculate_score(player1.p_cards, player1.p_score)
-        print(f"This is your current score {player1.p_score}")
+        # print(f"This is {player1.name}'s current score {player1.p_score}")
     while player1.p_score < 21:
         try:
             print("Select action: Hit | Stand | View Cards | Quit | Test")
@@ -143,7 +146,7 @@ def game_actions(p_cards, p_score):
                 player1.player_hit()
                 print(f"You drew a: {player1.p_cards[(len(player1.p_cards)-1)]}")
                 player1.calculate_score(player1.p_cards, player1.p_score)
-                print(player1.p_score)
+                # print(player1.p_score)
                 if player1.p_score == 21:
                     print("21! You win!")
                     print("Play again? Y/N")
@@ -164,7 +167,10 @@ def game_actions(p_cards, p_score):
                         sys.exit()
             elif action == 'Stand' or action == 'stand':
                 print("Awaiting dealer turn...")
-                break
+                if round_count > 1:
+                    return dealer_loop(p_cards = dealer.p_cards, p_score = dealer.p_score)
+                else:
+                    break
             elif action == 'View Cards' or action == 'view cards':
                 print(player1.p_cards)
             elif action == 'Quit' or action == 'quit':
@@ -195,13 +201,13 @@ def dealer_loop(p_cards, p_score):
     dealer.draw_hand()
     print(dealer.p_cards)
     dealer.calculate_score(dealer.p_cards, dealer.p_score)
-    print(f"Dealer score: {dealer.p_score}")
+    # print(f"Dealer score: {dealer.p_score}")
     try: 
         while dealer.p_score <= player1.p_score:
             dealer.dealer_hit()
             print(dealer.p_cards)
             dealer.calculate_score(dealer.p_cards, dealer.p_score)
-            print(f"Dealer score: {dealer.p_score}")
+            # print(f"Dealer score: {dealer.p_score}")
         if dealer.p_score > 21:
             print('Dealer busts! You win!')
             print("Play again? Y/N")
