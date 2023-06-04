@@ -5,7 +5,6 @@ game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10,
              'Jack', 'Queen', 'King', 'Ace']*4)
 
 round_count = 0
-# Add dict/list for player wins / losses
 
 class Player:
     def __init__(self, name, p_cards, p_score, win_loss):
@@ -14,11 +13,13 @@ class Player:
         self.p_score = p_score
         self.win_loss = win_loss
 
+    # Function for player to draw initial cards
     def draw_hand(self, p_cards=None):
         global game_deck
         if p_cards is None:
             p_cards = []
 
+        # Need to shuffle deck, otherwise cards will be in order defined in game_deck
         random.shuffle(game_deck)
         p_cards.append(game_deck[0])
         p_cards.append(game_deck[1])
@@ -27,6 +28,7 @@ class Player:
 
         self.p_cards = p_cards
 
+    # Calculate score function, which is called after every time a player is hit to check for win (21) condition
     def calculate_score(self, p_cards, p_score) -> int:
         if isinstance(p_score, tuple):
             p_score = int(p_score)
@@ -40,6 +42,7 @@ class Player:
                 if c == 'Jack' or c == 'Queen' or c == 'King':
                     p_score += 10
                 else:
+                    # Special logic for player to select either 1 or 11 as value for a drawn Ace
                     print(f"{self.name}'s score is currently: {p_score} and your cards are: {p_cards}")
                     print("Would you like your Ace to be scored as a 1 or an 11?")
                     choice = input()
@@ -55,7 +58,8 @@ class Player:
         
         self.p_score = p_score
         print(f"This is {self.name}'s current score: {p_score}")
-    
+
+    # Player hits need to alter the global game deck and remove drawn cards from pool    
     def player_hit(p_cards):
         global game_deck
         player1.p_cards.append(game_deck[0])
@@ -66,6 +70,7 @@ class Player:
         dealer.p_cards.append(game_deck[0])
         game_deck.remove(dealer.p_cards[len(dealer.p_cards)-1])
 
+    # Function to reset the game_deck, player score/cards, and dealer score/cards after round
     def player_reset(p_cards, p_score):
         global game_deck
         game_deck.clear()
@@ -80,6 +85,7 @@ class Player:
         dealer.p_cards.clear()
         dealer.p_score == 0
 
+# Initializes game and defines player
 def game_init() -> Player:
     print("Hello and welcome to the casino! What is your name?")
     player_name = input()
