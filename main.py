@@ -5,12 +5,14 @@ game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10,
              'Jack', 'Queen', 'King', 'Ace']*4)
 
 round_count = 0
+# Add dict/list for player wins / losses
 
 class Player:
-    def __init__(self, name, p_cards, p_score):
+    def __init__(self, name, p_cards, p_score, win_loss):
         self.name = name
         self.p_cards = p_cards
         self.p_score = p_score
+        self.win_loss = win_loss
 
     def draw_hand(self, p_cards=None):
         global game_deck
@@ -50,9 +52,6 @@ class Player:
                     else:
                         print("Selection invalid, choosing 1 by default")
                         p_score =+ 1
-        # if player1.p_score == 21:
-        #     print("21! You win!")
-        #     print("Play again?")
         
         self.p_score = p_score
         print(f"This is {self.name}'s current score: {p_score}")
@@ -126,7 +125,7 @@ class Player:
 def game_init() -> Player:
     print("Hello and welcome to the casino! What is your name?")
     player_name = input()
-    player1 = Player(f"{player_name}", None, 0)
+    player1 = Player(f"{player_name}", None, 0, win_loss={'Wins': 0, 'Losses': 0})
     print(player1.p_cards)
     return player1
 player1 = game_init()
@@ -149,6 +148,7 @@ def game_actions(p_cards, p_score):
                 # print(player1.p_score)
                 if player1.p_score == 21:
                     print("21! You win!")
+                    player1.win_loss['Wins'] +=1
                     print("Play again? Y/N")
                     play_again = input()
                     if play_again == 'Y' or play_again == 'y':
@@ -158,12 +158,14 @@ def game_actions(p_cards, p_score):
                         sys.exit()
                 elif player1.p_score > 21:
                     print("Bust! You lose!")
+                    player1.win_loss['Losses'] +=1
                     print("Play again? Y/N")
                     play_again = input()
                     if play_again == 'Y' or play_again == 'y':
                         player1.player_reset(p_score)
                         return game_actions(p_cards, p_score)
                     elif play_again == 'N' or play_again == 'n':
+                        print(player1.win_loss)
                         sys.exit()
             elif action == 'Stand' or action == 'stand':
                 print("Awaiting dealer turn...")
@@ -195,7 +197,8 @@ def game_actions(p_cards, p_score):
 
 game_actions(p_cards = player1.p_cards, p_score = player1.p_score)
 
-dealer = Player("Dealer", None, 0)
+# Creates dealer instance before dealer turn
+dealer = Player("Dealer", None, 0, None)
 
 def dealer_loop(p_cards, p_score):
     dealer.draw_hand()
@@ -210,6 +213,7 @@ def dealer_loop(p_cards, p_score):
             # print(f"Dealer score: {dealer.p_score}")
         if dealer.p_score > 21:
             print('Dealer busts! You win!')
+            player1.win_loss['Wins'] +=1
             print("Play again? Y/N")
             play_again = input()
             if play_again == 'Y' or play_again == 'y':
@@ -223,6 +227,7 @@ def dealer_loop(p_cards, p_score):
             # return game_actions(p_cards, p_score)
         elif 21 >= dealer.p_score > player1.p_score:
             print('Dealer wins!')
+            player1.win_loss['Losses'] +=1
             print("Play again? Y/N")
             play_again = input()
             if play_again == 'Y' or play_again == 'y':
@@ -234,6 +239,7 @@ def dealer_loop(p_cards, p_score):
             return game_actions(p_cards, p_score)
     except:
         print('An error occurred')
+        print(player1.win_loss)
         sys.exit()
 
 dealer_loop(p_cards = dealer.p_cards, p_score = dealer.p_score)
