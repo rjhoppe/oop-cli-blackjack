@@ -75,52 +75,10 @@ class Player:
         round_count += 1
         player1.p_cards.clear()
         player1.p_score = 0
-        # p_cards == None
-        # p_score == 0
-        # new_score = 0
-        # p_score = new_score
-        
-    # def player_score_reset(p_score):    
-    #     player1.p_score = 0
 
     def dealer_reset(p_cards, p_score):
         dealer.p_cards.clear()
         dealer.p_score == 0
-
-    # Works
-    #
-    # def player_reset(p_cards, p_score):
-    #     global game_deck
-    #     game_deck.clear()
-    #     game_deck = ([2, 3, 4, 5, 6, 7, 8, 9, 10, 
-    #          'Jack', 'Queen', 'King', 'Ace']*4)
-    #     player1.p_cards.clear()
-    #     player1.p_cards == None
-    #     player1.p_score == 0
-
-
-    # player1.player_reset(player1.p_cards)
-    # print(player1.p_cards)
-
-
-
-# player1 = Player("Rick", None, 0)
-# player1.draw_hand()
-# print(player1.p_cards)
-# player1.calculate_score(player1.p_cards, player1.p_score)
-# print(player1.p_score)
-# player1.hit()
-# print(player1.p_cards)
-# player1.calculate_score(player1.p_cards, player1.p_score)
-# print(player1.p_score)
-
-# def game_init() -> Player:
-#     print("Hello and welcome to the casino! What is your name?")
-#     player_name = input()
-#     player1 = Player(f"{player_name}", None, 0)
-
-# game_init()
-
 
 def game_init() -> Player:
     print("Hello and welcome to the casino! What is your name?")
@@ -136,7 +94,6 @@ def game_actions(p_cards, p_score):
         player1.draw_hand()
         print(player1.p_cards)
         player1.calculate_score(player1.p_cards, player1.p_score)
-        # print(f"This is {player1.name}'s current score {player1.p_score}")
     while player1.p_score < 21:
         try:
             print("Select action: Hit | Stand | View Cards | Quit | Test")
@@ -145,7 +102,6 @@ def game_actions(p_cards, p_score):
                 player1.player_hit()
                 print(f"You drew a: {player1.p_cards[(len(player1.p_cards)-1)]}")
                 player1.calculate_score(player1.p_cards, player1.p_score)
-                # print(player1.p_score)
                 if player1.p_score == 21:
                     print("21! You win!")
                     player1.win_loss['Wins'] +=1
@@ -155,6 +111,8 @@ def game_actions(p_cards, p_score):
                         player1.player_reset(p_score)
                         return game_actions(p_cards, p_score)
                     elif play_again == 'N' or play_again == 'n':
+                        # Run player_reset to increment the round counter
+                        player1.player_reset(p_score)
                         sys.exit()
                 elif player1.p_score > 21:
                     print("Bust! You lose!")
@@ -165,7 +123,8 @@ def game_actions(p_cards, p_score):
                         player1.player_reset(p_score)
                         return game_actions(p_cards, p_score)
                     elif play_again == 'N' or play_again == 'n':
-                        print(player1.win_loss)
+                        # Run player_reset to increment the round counter
+                        player1.player_reset(p_score)
                         sys.exit()
             elif action == 'Stand' or action == 'stand':
                 print("Awaiting dealer turn...")
@@ -177,10 +136,10 @@ def game_actions(p_cards, p_score):
                 print(player1.p_cards)
             elif action == 'Quit' or action == 'quit':
                 sys.exit()
+            # Remove this before finalizing
             elif action == 'Test' or action == 'test':
                 # Below works
                 player1.player_reset(p_score)
-                # dealer.player_reset(p_score)
                 print(player1.p_cards)
                 # print(dealer.p_score)
                 return game_actions(p_cards, p_score)
@@ -204,27 +163,25 @@ def dealer_loop(p_cards, p_score):
     dealer.draw_hand()
     print(dealer.p_cards)
     dealer.calculate_score(dealer.p_cards, dealer.p_score)
-    # print(f"Dealer score: {dealer.p_score}")
     try: 
         while dealer.p_score <= player1.p_score:
             dealer.dealer_hit()
+            print("The dealer draws a card...")
             print(dealer.p_cards)
             dealer.calculate_score(dealer.p_cards, dealer.p_score)
-            # print(f"Dealer score: {dealer.p_score}")
         if dealer.p_score > 21:
             print('Dealer busts! You win!')
             player1.win_loss['Wins'] +=1
             print("Play again? Y/N")
             play_again = input()
             if play_again == 'Y' or play_again == 'y':
-                # player1.player_reset(p_cards)
-                # dealer.player_reset(p_cards, p_score)
                 player1.player_reset(p_score)
                 dealer.player_reset(p_score)
                 return game_actions(p_cards, p_score)
             elif play_again == 'N' or play_again == 'n':
+                # Run player_reset to increment the round counter
+                player1.player_reset(p_score)
                 sys.exit()
-            # return game_actions(p_cards, p_score)
         elif 21 >= dealer.p_score > player1.p_score:
             print('Dealer wins!')
             player1.win_loss['Losses'] +=1
@@ -235,26 +192,16 @@ def dealer_loop(p_cards, p_score):
                 dealer.player_reset(p_score)
                 return game_actions(p_cards, p_score)
             elif play_again == 'N' or play_again == 'n':
+                # Run player_reset to increment the round counter
+                player1.player_reset(p_score)
                 sys.exit()
             return game_actions(p_cards, p_score)
     except:
-        print('An error occurred')
-        print(player1.win_loss)
+        global round_count
+        print("Game summary:" + "\n" + f"Wins:{player1.win_loss['Wins']}" + "\n" + 
+              f"Losses:{player1.win_loss['Losses']}" + "\n" + f"Rounds:{round_count}")
         sys.exit()
 
 dealer_loop(p_cards = dealer.p_cards, p_score = dealer.p_score)
-
-# try:
-#     while dealer.p_score < player1.p_score:
-#         dealer.hit()
-#         dealer.calculate_score(dealer.p_cards, dealer.p_score)
-#         # print(dealer.p_score)
-#         # print(dealer.p_cards)
-#     # elif dealer.p_score > player1.p_score:
-#     #     print(dealer.p_score)
-#     #     print('Dealer wins!')
-# except:
-#     print('An error occurred')
-#     sys.exit()
 
 
