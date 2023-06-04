@@ -90,7 +90,6 @@ def game_init() -> Player:
     print("Hello and welcome to the casino! What is your name?")
     player_name = input()
     player1 = Player(f"{player_name}", None, 0, win_loss={'Wins': 0, 'Losses': 0})
-    print(player1.p_cards)
     return player1
 player1 = game_init()
 
@@ -102,7 +101,7 @@ def game_actions(p_cards, p_score):
         player1.calculate_score(player1.p_cards, player1.p_score)
     while player1.p_score < 21:
         try:
-            print("Select action: Hit | Stand | View Cards | Quit | Test")
+            print("Select action: Hit | Stand | View Cards | Quit")
             action = input()
             if action == 'Hit' or action == 'hit':
                 player1.player_hit()
@@ -142,17 +141,6 @@ def game_actions(p_cards, p_score):
                 print(player1.p_cards)
             elif action == 'Quit' or action == 'quit':
                 sys.exit()
-            # Remove this before finalizing
-            elif action == 'Test' or action == 'test':
-                # Below works
-                player1.player_reset(p_score)
-                print(player1.p_cards)
-                # print(dealer.p_score)
-                return game_actions(p_cards, p_score)
-                # print(len(game_deck))
-                # print(player1.p_score)
-                # player1.player_score_reset()
-                # print(player1.p_score)
             else:
                 print("I'm sorry. That command is not recognized, please select another option...")
                 return game_actions(p_cards = None, p_score = 0)
@@ -170,6 +158,8 @@ def dealer_loop(p_cards, p_score):
     print(dealer.p_cards)
     dealer.calculate_score(dealer.p_cards, dealer.p_score)
     try: 
+        # Dealer will hit until they exceed player's score
+        # Player will need to choose 11 or 1 for dealer
         while dealer.p_score <= player1.p_score:
             dealer.dealer_hit()
             print("The dealer draws a card...")
